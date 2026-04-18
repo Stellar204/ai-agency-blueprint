@@ -86,6 +86,9 @@
     border-top:1px solid var(--border);
     border-bottom:1px solid var(--border);
     margin-bottom:64px;
+    margin-left:calc(-50vw + 50%);
+    margin-right:calc(-50vw + 50%);
+    width:100vw;
     padding:14px 0;
   }
 
@@ -341,7 +344,7 @@
     padding:48px 0;
     border-top:1px solid var(--border);
     border-bottom:1px solid var(--border);
-    margin:56px 0;
+    margin:56px 0 0;
   }
 
   .pq p {
@@ -602,7 +605,12 @@
   /* ── TICKER FIX ── */
   .ticker {
     overflow:hidden;
-    width:100%;
+    width:100vw;
+  }
+
+  /* Remove double border when section ends with .pq */
+  .section > .pq:last-child {
+    margin-bottom:-96px;
   }
 
   /* ── MOBILE ── */
@@ -1061,7 +1069,7 @@
       </div>
     </div>
 
-    <a href="https://instagram.com/thejuniorrivera" target="_blank" class="cta-btn">DM Me on Instagram</a>
+    <a href="https://tally.so/r/MeY7P0" target="_blank" class="cta-btn">Apply Now</a>
     <span class="cta-handle">@thejuniorrivera</span>
   </div>
 
