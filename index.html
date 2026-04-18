@@ -598,6 +598,96 @@
     .section { opacity:1 !important; transform:none !important; }
     .bg-orb { display:none; }
   }
+
+  /* ── TICKER FIX ── */
+  .ticker {
+    overflow:hidden;
+    width:100%;
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 768px) {
+    .wrap { padding:0 24px; }
+
+    .hero {
+      padding:60px 24px 72px;
+    }
+
+    .hero-title {
+      font-size: 52px;
+      letter-spacing:-2px;
+    }
+
+    .hero-title .line2 { margin-left:0; }
+
+    .hero-sub { font-size:15px; margin-bottom:48px; }
+
+    .stat-bar { grid-template-columns:1fr; }
+    .stat { border-right:none; border-bottom:1px solid var(--border2); padding:20px 24px; }
+    .stat:last-child { border-bottom:none; }
+    .stat-val { font-size:36px; }
+
+    .section { padding:64px 0; }
+
+    .s-title { font-size:32px; letter-spacing:-1px; }
+
+    .lead { font-size:16px; }
+
+    /* 2-col → 1-col on mobile */
+    .feat-grid {
+      grid-template-columns:1fr;
+    }
+
+    /* 3-col niche → 1-col on mobile */
+    .niche-grid {
+      grid-template-columns:1fr;
+    }
+
+    /* compare table scrollable */
+    .cmp-wrap {
+      overflow-x:auto;
+      -webkit-overflow-scrolling:touch;
+      margin:48px 0;
+    }
+    .cmp { margin:0; min-width:480px; }
+
+    /* timeline stack */
+    .t-item {
+      grid-template-columns:1fr;
+      gap:16px;
+    }
+    .t-left { text-align:left; display:flex; align-items:baseline; gap:12px; }
+    .t-num { font-size:40px; }
+    .t-wk { margin-top:0; }
+
+    /* questions */
+    .q-item { grid-template-columns:40px 1fr; gap:16px; }
+    .q-q { font-size:15px; }
+
+    /* mindset */
+    .truth-list li { grid-template-columns:3px 1fr; gap:16px; }
+
+    /* cta */
+    .cta-wrap { padding:72px 0 80px; }
+    .cta-title { font-size:36px; letter-spacing:-1px; }
+    .get-grid { grid-template-columns:1fr; }
+
+    /* footer */
+    footer { padding:28px 24px; }
+
+    /* pq */
+    .pq p { font-size:20px; }
+
+    /* pullquote */
+    .pq { margin:40px 0; padding:32px 0; }
+  }
+
+  @media (max-width: 480px) {
+    .hero-title { font-size:42px; }
+    .s-title { font-size:28px; }
+    .cta-title { font-size:30px; }
+    .feat-grid { grid-template-columns:1fr; }
+  }
 </style>
 </head>
 <body>
@@ -683,6 +773,7 @@
       </div>
     </div>
 
+    <div class="cmp-wrap">
     <table class="cmp">
       <thead>
         <tr>
@@ -698,6 +789,7 @@
         <tr><td>No visibility into missed opportunities</td><td>Every interaction logged and tracked</td></tr>
       </tbody>
     </table>
+    </div>
 
     <div class="pq">
       <p>You are not selling software. <span class="o">You are selling a business owner their time back.</span></p>
