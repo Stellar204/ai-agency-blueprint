@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The AI Agency Blueprint</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:     #131311;
+    --bg2:    #1b1b18;
+    --bg3:    #222220;
+    --border: rgba(255,255,255,0.08);
+    --border2:rgba(255,255,255,0.14);
+    --orange: #f05a28;
+    --orange2:#ff7a4a;
+    --o-glow: rgba(240,90,40,0.18);
+    --o-faint:rgba(240,90,40,0.06);
+    --white:  #f5f4f1;
+    --body:   #b8b5ae;
+    --sub:    #6b6860;
+    --dim:    #3d3c39;
+  }
+
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+
+  body {
+    background:var(--bg);
+    color:var(--white);
+    font-family:'Sora', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  /* ── ANIMATED BACKGROUND ── */
+  .bg-orb {
+    position:fixed;
+    border-radius:50%;
+    pointer-events:none;
+    z-index:0;
+    filter:blur(80px);
+    opacity:0;
+    animation:orbFloat 8s ease-in-out infinite;
+  }
+  .orb1 {
+    width:500px; height:500px;
+    background:radial-gradient(circle, rgba(240,90,40,0.12), transparent 70%);
+    top:-100px; right:-100px;
+    animation-delay:0s;
+    opacity:1;
+  }
+  .orb2 {
+    width:400px; height:400px;
+    background:radial-gradient(circle, rgba(240,90,40,0.07), transparent 70%);
+    bottom:20%; left:-150px;
+    animation-delay:4s;
+    opacity:1;
+  }
+
+  @keyframes orbFloat {
+    0%,100% { transform:translateY(0) scale(1); }
+    50%      { transform:translateY(-40px) scale(1.08); }
+  }
+
+  .z1 { position:relative; z-index:1; }
+
+  .wrap {
+    max-width:820px;
+    margin:0 auto;
+    padding:0 52px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    max-width:820px; margin:0 auto;
+    padding:120px 52px 100px;
+    border-bottom:1px solid var(--border);
+    position:relative; z-index:1;
+    overflow:hidden;
+  }
+
+  /* animated ticker line */
+  .ticker {
+    overflow:hidden;
+    border-top:1px solid var(--border);
+    border-bottom:1px solid var(--border);
+    margin-bottom:64px;
+    padding:14px 0;
+  }
+
+  .ticker-inner {
+    display:flex; gap:48px;
+    width:max-content;
+    animation:ticker 20s linear infinite;
+  }
+
+  @keyframes ticker {
+    from { transform:translateX(0); }
+    to   { transform:translateX(-50%); }
+  }
+
+  .ticker-item {
+    font-size:11px; font-weight:600;
+    letter-spacing:3px; text-transform:uppercase;
+    color:var(--sub); white-space:nowrap;
+    display:flex; align-items:center; gap:20px;
+  }
+
+  .ticker-item .dot {
+    width:4px; height:4px; border-radius:50%;
+    background:var(--orange); flex-shrink:0;
+  }
+
+  .hero-kicker {
+    font-size:11px; font-weight:700;
+    letter-spacing:4px; text-transform:uppercase;
+    color:var(--orange); margin-bottom:32px;
+    display:flex; align-items:center; gap:12px;
+    opacity:0; animation:rise .7s ease .1s forwards;
+  }
+
+  .hero-kicker::before {
+    content:'';
+    width:32px; height:2px;
+    background:var(--orange);
+    display:block;
+  }
+
+  .hero-title {
+    font-size:clamp(58px, 9vw, 100px);
+    font-weight:800; line-height:.92;
+    letter-spacing:-3px;
+    margin-bottom:32px;
+    opacity:0; animation:rise .7s ease .2s forwards;
+  }
+
+  .hero-title .line2 {
+    display:block;
+    color:transparent;
+    -webkit-text-stroke:2px var(--orange);
+    margin-left:40px;
+  }
+
+  .hero-title .line3 {
+    display:block;
+    color:var(--orange);
+  }
+
+  .hero-sub {
+    font-size:17px; font-weight:300;
+    color:var(--body); line-height:1.8;
+    max-width:520px; margin-bottom:64px;
+    opacity:0; animation:rise .7s ease .35s forwards;
+  }
+
+  .hero-sub strong { color:var(--white); font-weight:600; }
+
+  /* stat bar */
+  .stat-bar {
+    display:grid; grid-template-columns:repeat(3,1fr);
+    border:1px solid var(--border2);
+    opacity:0; animation:rise .7s ease .5s forwards;
+  }
+
+  .stat {
+    padding:28px 32px;
+    border-right:1px solid var(--border2);
+    position:relative; overflow:hidden;
+  }
+  .stat:last-child { border-right:none; }
+
+  .stat::after {
+    content:'';
+    position:absolute; bottom:0; left:0; right:0; height:2px;
+    background:var(--orange);
+    transform:scaleX(0); transform-origin:left;
+    transition:transform .4s ease;
+  }
+  .stat:hover::after { transform:scaleX(1); }
+
+  .stat-val {
+    font-size:48px; font-weight:800;
+    line-height:1; color:var(--white);
+    margin-bottom:6px; letter-spacing:-2px;
+  }
+
+  .stat-val span { color:var(--orange); }
+
+  .stat-lbl {
+    font-size:10px; font-weight:700;
+    letter-spacing:3px; text-transform:uppercase;
+    color:var(--sub);
+  }
+
+  /* ── SECTION ── */
+  .section {
+    padding:96px 0;
+    border-bottom:1px solid var(--border);
+    opacity:0; transform:translateY(36px);
+    transition:opacity .8s cubic-bezier(.16,1,.3,1),
+               transform .8s cubic-bezier(.16,1,.3,1);
+  }
+  .section.on { opacity:1; transform:none; }
+
+  .s-eyebrow {
+    font-size:10px; font-weight:700;
+    letter-spacing:4px; text-transform:uppercase;
+    color:var(--orange); margin-bottom:20px;
+    display:flex; align-items:center; gap:12px;
+  }
+
+  .s-eyebrow::before {
+    content:''; width:20px; height:2px;
+    background:var(--orange); display:block;
+  }
+
+  .s-title {
+    font-size:clamp(36px, 5vw, 56px);
+    font-weight:800; line-height:1.0;
+    letter-spacing:-1.5px; margin-bottom:40px;
+  }
+
+  .s-title .o { color:var(--orange); }
+
+  .lead {
+    font-size:18px; font-weight:400;
+    color:var(--body); line-height:1.8;
+    margin-bottom:40px; max-width:660px;
+  }
+
+  .body-txt {
+    font-size:15px; font-weight:300;
+    color:var(--body); line-height:1.9;
+    margin-bottom:24px;
+  }
+
+  .body-txt strong { color:var(--white); font-weight:600; }
+
+  /* ── FEATURE GRID ── */
+  .feat-grid {
+    display:grid; grid-template-columns:1fr 1fr;
+    gap:1px; background:var(--border);
+    border:1px solid var(--border); margin:48px 0;
+  }
+
+  .feat {
+    background:var(--bg2); padding:32px;
+    transition:background .25s;
+    position:relative; overflow:hidden;
+  }
+
+  .feat::before {
+    content:''; position:absolute;
+    top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg, var(--orange), var(--orange2));
+    transform:scaleX(0); transform-origin:left;
+    transition:transform .4s ease;
+  }
+
+  .feat:hover { background:var(--bg3); }
+  .feat:hover::before { transform:scaleX(1); }
+
+  .feat-num {
+    font-family:'DM Mono', monospace;
+    font-size:11px; color:var(--orange);
+    margin-bottom:14px; letter-spacing:1px;
+  }
+
+  .feat-title {
+    font-size:15px; font-weight:700;
+    color:var(--white); margin-bottom:10px;
+    text-transform:uppercase; letter-spacing:.5px;
+  }
+
+  .feat-body { font-size:14px; color:var(--body); line-height:1.7; }
+
+  /* ── TABLE ── */
+  .cmp {
+    width:100%; border-collapse:collapse; margin:48px 0;
+  }
+
+  .cmp thead tr { border-bottom:2px solid var(--border2); }
+
+  .cmp th {
+    font-size:10px; font-weight:700;
+    letter-spacing:3px; text-transform:uppercase;
+    padding:14px 20px; text-align:left;
+  }
+  .cmp th:first-child { color:var(--sub); }
+  .cmp th:last-child  { color:var(--orange); }
+
+  .cmp td {
+    padding:14px 20px; font-size:14px;
+    color:var(--body);
+    border-bottom:1px solid rgba(255,255,255,0.04);
+  }
+  .cmp td:last-child { color:var(--white); font-weight:500; }
+  .cmp tr:hover td { background:rgba(255,255,255,0.02); }
+
+  /* ── CALLOUT ── */
+  .callout {
+    border:1px solid rgba(240,90,40,.25);
+    background:var(--o-faint);
+    padding:36px 40px; margin:48px 0;
+    position:relative;
+  }
+
+  .callout-tag {
+    position:absolute; top:-1px; left:28px;
+    background:var(--bg); padding:0 12px;
+    font-size:9px; font-weight:700;
+    letter-spacing:3px; text-transform:uppercase;
+    color:var(--orange);
+    transform:translateY(-50%);
+  }
+
+  .callout-title {
+    font-size:18px; font-weight:700;
+    color:var(--white); margin-bottom:20px;
+    text-transform:uppercase; letter-spacing:.5px;
+  }
+
+  .callout ul { list-style:none; }
+  .callout ul li {
+    font-size:14px; color:var(--body);
+    padding:9px 0 9px 22px; position:relative;
+    border-bottom:1px solid rgba(255,255,255,0.04);
+    line-height:1.65;
+  }
+  .callout ul li:last-child { border-bottom:none; }
+  .callout ul li::before {
+    content:'›'; position:absolute; left:0;
+    color:var(--orange); font-size:16px; top:8px;
+    font-weight:700;
+  }
+  .callout ul li strong { color:var(--white); font-weight:600; }
+
+  /* ── PULL QUOTE ── */
+  .pq {
+    padding:48px 0;
+    border-top:1px solid var(--border);
+    border-bottom:1px solid var(--border);
+    margin:56px 0;
+  }
+
+  .pq p {
+    font-size:clamp(22px,3vw,32px);
+    font-weight:600; line-height:1.4;
+    color:var(--white); max-width:620px;
+    letter-spacing:-.5px;
+  }
+
+  .pq p .o { color:var(--orange); }
+
+  /* ── NICHE GRID ── */
+  .niche-grid {
+    display:grid; grid-template-columns:repeat(3,1fr);
+    gap:1px; background:var(--border);
+    border:1px solid var(--border); margin:48px 0;
+  }
+
+  .niche {
+    background:var(--bg2); padding:28px;
+    transition:background .2s;
+    position:relative; overflow:hidden;
+  }
+
+  .niche::after {
+    content:''; position:absolute;
+    left:0; top:0; bottom:0; width:3px;
+    background:var(--orange);
+    transform:scaleY(0); transform-origin:bottom;
+    transition:transform .3s ease;
+  }
+  .niche:hover { background:var(--bg3); }
+  .niche:hover::after { transform:scaleY(1); }
+
+  .niche-name {
+    font-size:15px; font-weight:700;
+    color:var(--white); margin-bottom:8px;
+    text-transform:uppercase; letter-spacing:.5px;
+  }
+
+  .niche-why { font-size:13px; color:var(--body); line-height:1.6; }
+
+  /* ── TIMELINE ── */
+  .timeline { margin:48px 0; }
+
+  .t-item {
+    display:grid; grid-template-columns:100px 1fr;
+    gap:40px; padding:40px 0;
+    border-bottom:1px solid var(--border);
+    align-items:start;
+    position:relative;
+  }
+  .t-item:first-child { border-top:1px solid var(--border); }
+
+  .t-left { text-align:right; }
+
+  .t-num {
+    font-size:64px; font-weight:800;
+    color:var(--bg3); line-height:1;
+    display:block; letter-spacing:-3px;
+    transition:color .3s;
+  }
+
+  .t-item:hover .t-num { color:var(--orange); }
+
+  .t-wk {
+    font-size:9px; font-weight:700;
+    letter-spacing:3px; text-transform:uppercase;
+    color:var(--sub); display:block; margin-top:4px;
+  }
+
+  .t-title {
+    font-size:22px; font-weight:700;
+    color:var(--white); margin-bottom:20px;
+    text-transform:uppercase; letter-spacing:-.3px;
+  }
+
+  .t-tasks { list-style:none; margin-bottom:20px; }
+  .t-tasks li {
+    font-size:14px; color:var(--body);
+    padding:7px 0 7px 18px; position:relative;
+    border-bottom:1px solid rgba(255,255,255,0.03);
+    line-height:1.6;
+  }
+  .t-tasks li:last-child { border-bottom:none; }
+  .t-tasks li::before {
+    content:'·'; position:absolute; left:0;
+    color:var(--orange); font-size:24px;
+    line-height:1; top:5px;
+  }
+
+  .t-goal {
+    font-family:'DM Mono', monospace;
+    font-size:12px; color:var(--orange);
+    letter-spacing:.5px;
+  }
+  .t-goal::before { content:'// '; color:var(--sub); }
+
+  /* ── QUESTIONS ── */
+  .q-list { margin:48px 0; }
+
+  .q-item {
+    display:grid; grid-template-columns:56px 1fr;
+    gap:24px; padding:32px 0;
+    border-bottom:1px solid var(--border);
+    align-items:start;
+    transition:background .2s;
+  }
+  .q-item:first-child { border-top:1px solid var(--border); }
+  .q-item:hover { padding-left:8px; }
+
+  .q-n {
+    font-family:'DM Mono', monospace;
+    font-size:11px; font-weight:500;
+    color:var(--orange); padding-top:4px;
+    letter-spacing:1px;
+  }
+
+  .q-q {
+    font-size:17px; font-weight:700;
+    color:var(--white); margin-bottom:12px;
+    line-height:1.3; letter-spacing:-.3px;
+  }
+
+  .q-a { font-size:14px; color:var(--body); line-height:1.75; }
+
+  /* ── MINDSET ── */
+  .truth-list { list-style:none; margin:48px 0; }
+  .truth-list li {
+    padding:32px 0;
+    border-bottom:1px solid var(--border);
+    display:grid; grid-template-columns:4px 1fr;
+    gap:24px; align-items:start;
+  }
+  .truth-list li:first-child { border-top:1px solid var(--border); }
+
+  .truth-bar {
+    width:4px; height:100%;
+    background:var(--dim);
+    border-radius:2px;
+    transition:background .3s;
+    margin-top:4px;
+  }
+  .truth-list li:hover .truth-bar { background:var(--orange); }
+
+  .truth-title {
+    font-size:18px; font-weight:700;
+    color:var(--white); margin-bottom:10px;
+    text-transform:uppercase; letter-spacing:-.2px;
+  }
+
+  .truth-body { font-size:14px; color:var(--body); line-height:1.8; }
+
+  /* ── CTA ── */
+  .cta-wrap {
+    padding:100px 0 120px; text-align:center;
+  }
+
+  .cta-kicker {
+    font-size:10px; font-weight:700;
+    letter-spacing:5px; text-transform:uppercase;
+    color:var(--orange); margin-bottom:32px;
+  }
+
+  .cta-title {
+    font-size:clamp(40px,7vw,72px);
+    font-weight:800; line-height:.95;
+    letter-spacing:-2px; color:var(--white);
+    margin-bottom:24px;
+  }
+
+  .cta-title .o { color:var(--orange); }
+  .cta-title .outline {
+    color:transparent;
+    -webkit-text-stroke:2px var(--white);
+  }
+
+  .cta-body {
+    font-size:16px; font-weight:300;
+    color:var(--body); max-width:480px;
+    margin:0 auto 48px; line-height:1.8;
+  }
+
+  .get-grid {
+    display:grid; grid-template-columns:1fr 1fr;
+    gap:1px; background:var(--border);
+    border:1px solid var(--border);
+    margin:0 auto 52px; text-align:left;
+  }
+
+  .get-item { background:var(--bg2); padding:28px 32px; }
+
+  .get-n {
+    font-family:'DM Mono', monospace;
+    font-size:11px; color:var(--orange);
+    margin-bottom:10px; letter-spacing:1px;
+  }
+
+  .get-t { font-size:14px; color:var(--body); line-height:1.65; }
+
+  .cta-btn {
+    display:inline-block;
+    background:var(--orange);
+    color:var(--white);
+    font-size:12px; font-weight:700;
+    letter-spacing:3px; text-transform:uppercase;
+    padding:20px 56px; text-decoration:none;
+    transition:all .25s ease;
+    margin-bottom:20px;
+    position:relative; overflow:hidden;
+  }
+
+  .cta-btn::after {
+    content:''; position:absolute;
+    inset:0; background:rgba(255,255,255,0);
+    transition:background .25s;
+  }
+  .cta-btn:hover::after { background:rgba(255,255,255,0.1); }
+  .cta-btn:hover { transform:translateY(-2px); box-shadow:0 12px 40px rgba(240,90,40,.35); }
+
+  .cta-handle {
+    display:block; font-size:12px;
+    color:var(--sub); letter-spacing:2px;
+    font-family:'DM Mono', monospace;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top:1px solid var(--border);
+    padding:36px 52px;
+    max-width:820px; margin:0 auto;
+    display:flex; justify-content:space-between; align-items:center;
+    position:relative; z-index:1;
+  }
+
+  .f-brand {
+    font-size:14px; font-weight:700;
+    letter-spacing:.5px; color:var(--sub);
+  }
+
+  .f-handle {
+    font-family:'DM Mono', monospace;
+    font-size:11px; color:var(--sub); letter-spacing:1px;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes rise {
+    from { opacity:0; transform:translateY(24px); }
+    to   { opacity:1; transform:none; }
+  }
+
+  @media print {
+    body { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .section { opacity:1 !important; transform:none !important; }
+    .bg-orb { display:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-orb orb1"></div>
+<div class="bg-orb orb2"></div>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="ticker">
+    <div class="ticker-inner">
+      <span class="ticker-item"><span class="dot"></span>AI Receptionist</span>
+      <span class="ticker-item"><span class="dot"></span>$5K–$10K Per Client</span>
+      <span class="ticker-item"><span class="dot"></span>30-Day System</span>
+      <span class="ticker-item"><span class="dot"></span>Junior Rivera</span>
+      <span class="ticker-item"><span class="dot"></span>AI Agency Blueprint</span>
+      <span class="ticker-item"><span class="dot"></span>Land Your First Client</span>
+      <span class="ticker-item"><span class="dot"></span>AI Receptionist</span>
+      <span class="ticker-item"><span class="dot"></span>$5K–$10K Per Client</span>
+      <span class="ticker-item"><span class="dot"></span>30-Day System</span>
+      <span class="ticker-item"><span class="dot"></span>Junior Rivera</span>
+      <span class="ticker-item"><span class="dot"></span>AI Agency Blueprint</span>
+      <span class="ticker-item"><span class="dot"></span>Land Your First Client</span>
+    </div>
+  </div>
+
+  <div class="hero-kicker">Junior Rivera — Free Resource</div>
+  <h1 class="hero-title">
+    THE AI<br>
+    <span class="line2">AGENCY</span><br>
+    <span class="line3">BLUEPRINT</span>
+  </h1>
+  <p class="hero-sub">
+    How to land your <strong>first AI client in 30 days</strong> — whether you are starting from scratch or adding AI to an existing agency.
+  </p>
+  <div class="stat-bar">
+    <div class="stat">
+      <div class="stat-val"><span>$</span>10K</div>
+      <div class="stat-lbl">Per Client</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">30</div>
+      <div class="stat-lbl">Day System</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">1</div>
+      <div class="stat-lbl">Service to Sell</div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap z1">
+
+  <!-- 01 -->
+  <div class="section">
+    <div class="s-eyebrow">01 — The Product</div>
+    <h2 class="s-title">What You Are<br><span class="o">Selling</span></h2>
+
+    <p class="lead">An AI receptionist is a voice agent that answers calls, qualifies leads, books appointments, and follows up — 24 hours a day, without breaks or bad days.</p>
+
+    <p class="body-txt">For a business owner, this is not a technology purchase. This is <strong>their time back.</strong> The ability to stay on the job, stop worrying about missed calls, and know every lead is handled — without hiring anyone new.</p>
+
+    <div class="feat-grid">
+      <div class="feat">
+        <div class="feat-num">01</div>
+        <div class="feat-title">Zero Missed Leads</div>
+        <div class="feat-body">Every call answered instantly — including evenings, weekends, and holidays. No lead slips through the cracks.</div>
+      </div>
+      <div class="feat">
+        <div class="feat-num">02</div>
+        <div class="feat-title">Owner Stays on the Job</div>
+        <div class="feat-body">No more stopping mid-project to take a call. AI handles intake, qualification, and booking automatically.</div>
+      </div>
+      <div class="feat">
+        <div class="feat-num">03</div>
+        <div class="feat-title">Instant Follow-Up</div>
+        <div class="feat-body">Leads followed up in seconds — not hours. Speed of response alone dramatically increases close rates.</div>
+      </div>
+      <div class="feat">
+        <div class="feat-num">04</div>
+        <div class="feat-title">No Extra Headcount</div>
+        <div class="feat-body">AI handles the volume of a full-time receptionist at a fraction of the cost — and it never calls in sick.</div>
+      </div>
+    </div>
+
+    <table class="cmp">
+      <thead>
+        <tr>
+          <th>Without AI Receptionist</th>
+          <th>With AI Receptionist</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Missed calls mean lost revenue</td><td>Every call answered, every lead captured</td></tr>
+        <tr><td>Owner stops working to take calls</td><td>Owner stays focused on the job</td></tr>
+        <tr><td>Leads go cold after hours</td><td>AI follows up in seconds, around the clock</td></tr>
+        <tr><td>Must hire office staff to keep up</td><td>AI scales with zero added payroll</td></tr>
+        <tr><td>No visibility into missed opportunities</td><td>Every interaction logged and tracked</td></tr>
+      </tbody>
+    </table>
+
+    <div class="pq">
+      <p>You are not selling software. <span class="o">You are selling a business owner their time back.</span></p>
+    </div>
+
+    <div class="callout">
+      <div class="callout-tag">The Numbers</div>
+      <div class="callout-title">What You Charge</div>
+      <ul>
+        <li>One-time setup fee of <strong>$5,000 – $10,000 per client</strong></li>
+        <li>Not a retainer or subscription — a single project fee</li>
+        <li>Two clients a month = $10,000–$20,000 in revenue</li>
+        <li>One strong discovery call is all it takes to close at this price</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 02 -->
+  <div class="section">
+    <div class="s-eyebrow">02 — Target Market</div>
+    <h2 class="s-title">Who to<br><span class="o">Target</span></h2>
+
+    <p class="lead">The ideal client is a local service business — one that generates most of its revenue over the phone and cannot afford to miss a single call.</p>
+
+    <p class="body-txt">These are business owners on job sites, under sinks, and on rooftops — not sitting at a desk. Every missed call is a job they did not get. When you show them how many calls they miss each week, the conversation practically closes itself.</p>
+
+    <div class="niche-grid">
+      <div class="niche">
+        <div class="niche-name">Painters</div>
+        <div class="niche-why">Always on site, rarely near a phone. High-ticket jobs, high cost per missed call.</div>
+      </div>
+      <div class="niche">
+        <div class="niche-name">Plumbers & HVAC</div>
+        <div class="niche-why">Emergency-driven. Speed of response determines who gets the job.</div>
+      </div>
+      <div class="niche">
+        <div class="niche-name">Electricians</div>
+        <div class="niche-why">High average job value. Missed calls carry outsized revenue impact.</div>
+      </div>
+      <div class="niche">
+        <div class="niche-name">Roofers</div>
+        <div class="niche-why">Seasonal urgency. One missed storm-damage call can be a $15K loss.</div>
+      </div>
+      <div class="niche">
+        <div class="niche-name">Dentists & Chiro</div>
+        <div class="niche-why">High appointment volume. Every missed booking is revenue gone.</div>
+      </div>
+      <div class="niche">
+        <div class="niche-name">Auto Repair</div>
+        <div class="niche-why">High call volume, repeat customers. AI keeps them consistently booked.</div>
+      </div>
+    </div>
+
+    <div class="pq">
+      <p>Pick one niche. <span class="o">Go deep. The riches are not in the broadest reach — they are in the sharpest positioning.</span></p>
+    </div>
+  </div>
+
+  <!-- 03 -->
+  <div class="section">
+    <div class="s-eyebrow">03 — The System</div>
+    <h2 class="s-title">Your 30-Day<br><span class="o">Roadmap</span></h2>
+    <p class="lead">Four weeks. Four phases. Each builds on the last. Do not skip ahead.</p>
+
+    <div class="timeline">
+      <div class="t-item">
+        <div class="t-left">
+          <span class="t-num">01</span>
+          <span class="t-wk">Week One</span>
+        </div>
+        <div>
+          <div class="t-title">Position Yourself</div>
+          <ul class="t-tasks">
+            <li>Choose one niche — commit to it, no splitting focus</li>
+            <li>Research your market: what do these businesses consistently struggle with</li>
+            <li>Set up a clean outreach presence on Instagram or LinkedIn</li>
+            <li>Write one sharp value proposition for your niche</li>
+            <li>Study three businesses as if you were pitching them tomorrow</li>
+          </ul>
+          <div class="t-goal">Know exactly who you serve and why they need you</div>
+        </div>
+      </div>
+
+      <div class="t-item">
+        <div class="t-left">
+          <span class="t-num">02</span>
+          <span class="t-wk">Week Two</span>
+        </div>
+        <div>
+          <div class="t-title">Build Your List</div>
+          <ul class="t-tasks">
+            <li>Find 10 target businesses via Google Maps, Instagram, or local directories</li>
+            <li>Find the name of the owner or decision maker for each</li>
+            <li>Locate their preferred contact: DM, email, or direct phone</li>
+            <li>Build a simple tracking spreadsheet — name, business, contact, status</li>
+            <li>Qualify each: active presence, recent reviews, signs of growth</li>
+          </ul>
+          <div class="t-goal">10 qualified prospects ready to contact</div>
+        </div>
+      </div>
+
+      <div class="t-item">
+        <div class="t-left">
+          <span class="t-num">03</span>
+          <span class="t-wk">Week Three</span>
+        </div>
+        <div>
+          <div class="t-title">Start Conversations</div>
+          <ul class="t-tasks">
+            <li>Send a personalized message to all 10 — reference something specific to their business</li>
+            <li>Open with curiosity, not a pitch — ask about them first</li>
+            <li>Follow up once with anyone who does not respond within 3 days</li>
+            <li>Aim for at least two discovery calls booked for Week 4</li>
+            <li>Adjust messaging based on which approaches generate real responses</li>
+          </ul>
+          <div class="t-goal">Two or more discovery calls booked</div>
+        </div>
+      </div>
+
+      <div class="t-item">
+        <div class="t-left">
+          <span class="t-num">04</span>
+          <span class="t-wk">Week Four</span>
+        </div>
+        <div>
+          <div class="t-title">Close</div>
+          <ul class="t-tasks">
+            <li>Run your discovery calls — listen far more than you present</li>
+            <li>Ask: how many calls do you miss? What does a missed job cost you?</li>
+            <li>Only present your solution after you fully understand their pain</li>
+            <li>When objections come, find the real concern — it is rarely the price</li>
+            <li>Ask for the decision before the call ends — do not leave it open</li>
+          </ul>
+          <div class="t-goal">Your first signed client</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 -->
+  <div class="section">
+    <div class="s-eyebrow">04 — The Close</div>
+    <h2 class="s-title">The Discovery<br><span class="o">Call</span></h2>
+    <p class="lead">The sale is made or lost in the first fifteen minutes — not because of your pitch, but because of your questions.</p>
+    <p class="body-txt">Most people lose deals not because of price but because they never uncovered what the prospect actually cared about. Ask these five questions in order. Let the answers do the selling.</p>
+
+    <div class="q-list">
+      <div class="q-item">
+        <div class="q-n">01 /</div>
+        <div>
+          <div class="q-q">How do most of your new clients find you?</div>
+          <div class="q-a">This establishes how dependent their business is on inbound calls. It frames every missed call as a missed revenue opportunity before you say another word.</div>
+        </div>
+      </div>
+      <div class="q-item">
+        <div class="q-n">02 /</div>
+        <div>
+          <div class="q-q">What happens when you miss a call while on the job?</div>
+          <div class="q-a">You are asking them to say the pain out loud. A prospect who verbalizes their problem is far more likely to act on it. Let them explain it — do not explain it for them.</div>
+        </div>
+      </div>
+      <div class="q-item">
+        <div class="q-n">03 /</div>
+        <div>
+          <div class="q-q">Do you have anyone dedicated to answering calls right now?</div>
+          <div class="q-a">This surfaces the gap clearly. Most of the time the answer is no — and that answer alone is worth more than any pitch you could give.</div>
+        </div>
+      </div>
+      <div class="q-item">
+        <div class="q-n">04 /</div>
+        <div>
+          <div class="q-q">What would one additional job per week mean for your business?</div>
+          <div class="q-a">Now they are doing the math themselves. You are not telling them the value — they are calculating it. Let the silence sit after this one.</div>
+        </div>
+      </div>
+      <div class="q-item">
+        <div class="q-n">05 /</div>
+        <div>
+          <div class="q-q">If you never had to worry about a missed call again — what would that be worth?</div>
+          <div class="q-a">They are now pricing the solution for you. Whatever number they arrive at, your $5K–$10K fee becomes the obvious move.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pq">
+      <p>The best closers are not the best talkers. <span class="o">They are the best listeners.</span></p>
+    </div>
+
+    <div class="callout">
+      <div class="callout-tag">Objections</div>
+      <div class="callout-title">When They Say It's Too Expensive</div>
+      <ul>
+        <li>They do not understand the value — walk back through the math they did themselves</li>
+        <li>They do not trust that it works — introduce proof, case studies, or a risk reversal</li>
+        <li>They are not confident enough yet — slow down and keep asking questions</li>
+        <li><strong>Never drop your price before you know which one of these it actually is</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 05 -->
+  <div class="section">
+    <div class="s-eyebrow">05 — The Foundation</div>
+    <h2 class="s-title">The Mindset<br><span class="o">Behind the Close</span></h2>
+    <p class="lead">Skill is the vehicle. Mindset determines whether you ever get in the car.</p>
+
+    <ul class="truth-list">
+      <li>
+        <div class="truth-bar"></div>
+        <div>
+          <div class="truth-title">You Don't Need to Know Everything</div>
+          <div class="truth-body">You need to know enough to help one person solve one problem. Start there. Confidence follows competence — and competence follows action, not more preparation.</div>
+        </div>
+      </li>
+      <li>
+        <div class="truth-bar"></div>
+        <div>
+          <div class="truth-title">The Fear Is Loudest Before the First Step</div>
+          <div class="truth-body">The anticipation of difficulty is almost always greater than the difficulty itself. The only way to learn this is to move before you feel ready.</div>
+        </div>
+      </li>
+      <li>
+        <div class="truth-bar"></div>
+        <div>
+          <div class="truth-title">One Client Changes Everything</div>
+          <div class="truth-body">Not just financially. Your belief in the model, your story, your forward momentum — a single closed client transforms all of it.</div>
+        </div>
+      </li>
+      <li>
+        <div class="truth-bar"></div>
+        <div>
+          <div class="truth-title">Stop Consuming. Start Doing.</div>
+          <div class="truth-body">Another resource will not close your first client. The next action you take after finishing this guide should be deciding your niche — not finding another guide.</div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="pq">
+      <p>Whatever is stopping you right now <span class="o">will still be stopping you six months from now — unless you move.</span></p>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="section cta-wrap">
+    <div class="cta-kicker">Ready to Go Further?</div>
+    <h2 class="cta-title">
+      This guide gives you<br>
+      the <span class="outline">map.</span><br>
+      <span class="o">I give you the shortcut.</span>
+    </h2>
+    <p class="cta-body">If you want to skip the trial and error and build this with someone who has already done it — DM me. We will talk about whether working together makes sense.</p>
+
+    <div class="get-grid">
+      <div class="get-item">
+        <div class="get-n">01 /</div>
+        <div class="get-t">Weekly 1-on-1 calls for the full 12 weeks — directly with me, no coaches or CSMs</div>
+      </div>
+      <div class="get-item">
+        <div class="get-n">02 /</div>
+        <div class="get-t">24/7 direct support via text and Discord — no waiting, no middlemen</div>
+      </div>
+      <div class="get-item">
+        <div class="get-n">03 /</div>
+        <div class="get-t">Done-for-you scripts, outreach templates, and legal client agreements</div>
+      </div>
+      <div class="get-item">
+        <div class="get-n">04 /</div>
+        <div class="get-t">The exact system used to close $5K–$10K clients consistently</div>
+      </div>
+    </div>
+
+    <a href="https://instagram.com/thejuniorrivera" target="_blank" class="cta-btn">DM Me on Instagram</a>
+    <span class="cta-handle">@thejuniorrivera</span>
+  </div>
+
+</div>
+
+<footer>
+  <div class="f-brand">Junior Rivera</div>
+  <div class="f-handle">@thejuniorrivera</div>
+</footer>
+
+<script>
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('on'); });
+  }, { threshold: 0.06 });
+  document.querySelectorAll('.section').forEach(s => obs.observe(s));
+</script>
+</body>
+</html>
